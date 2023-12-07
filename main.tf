@@ -4,10 +4,6 @@ terraform {
       source = "hashicorp/aws"
       version = "5.29.0"
     }
-    # acme = {
-    #   source  = "vancluever/acme"
-    #   version = "2.8.0"
-    # }
   }
 }
 
@@ -21,11 +17,6 @@ provider "aws" {
     }
   }
 }
-
-# provider "acme" {
-#   #server_url = "https://acme-staging-v02.api.letsencrypt.org/directory"
-#   server_url = "https://acme-v02.api.letsencrypt.org/directory"
-# }
 
 ## resources
 # RSA key of size 4096 bits
@@ -110,12 +101,10 @@ resource "aws_instance" "proxy" {
   vpc_security_group_ids = [aws_security_group.sg_proxy.id]
   
   user_data = templatefile("${path.module}/scripts/cloud-init.tpl", {
-#      proxy_host            = aws_route53_record.www.name
       proxy_user            = var.proxy_user
       proxy_pass            = var.proxy_pass
       mitm_tar_download_url = var.mitm_tar_download_url
       mitm_tar_name         = var.mitm_tar_name
-#      proxy_cert            = base64encode("${acme_certificate.certificate.private_key_pem}${acme_certificate.certificate.certificate_pem}${acme_certificate.certificate.issuer_pem}")
   })
 }
 
@@ -129,44 +118,3 @@ resource "aws_eip_association" "eip_assoc" {
   instance_id   = aws_instance.proxy.id
   allocation_id = aws_eip.eip_proxy.id
 }
-
-## route53 fqdn
-# fetch zone
-# data "aws_route53_zone" "selected" {
-#   name         = var.route53_zone
-#   private_zone = false
-# }
-# # create record
-# resource "aws_route53_record" "www" {
-#   zone_id = data.aws_route53_zone.selected.zone_id
-#   name    = "${var.route53_subdomain}.${data.aws_route53_zone.selected.name}"
-#   type    = "A"
-#   ttl     = "300"
-#   records = [aws_eip.eip_proxy.public_ip]
-# }
-
-# ## certficate let's encrypt
-# # create auth key
-# resource "tls_private_key" "cert_private_key" {
-#   algorithm = "RSA"
-# }
-
-# # register
-# resource "acme_registration" "registration" {
-#   account_key_pem = tls_private_key.cert_private_key.private_key_pem
-#   email_address   = var.cert_email
-# }
-# # get certificate
-# resource "acme_certificate" "certificate" {
-#   account_key_pem = acme_registration.registration.account_key_pem
-#   common_name     = aws_route53_record.www.fqdn
-#   #subject_alternative_names = ["*.${aws_route53_record.www.name}"]
-
-#   dns_challenge {
-#     provider = "route53"
-
-#     config = {
-#       AWS_HOSTED_ZONE_ID = data.aws_route53_zone.selected.zone_id
-#     }
-#   }
-# }

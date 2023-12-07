@@ -1,0 +1,9 @@
+cert_email            = "youruser@yourdomain.com"
+route53_zone          = "subdomain.yourdomain.com"
+route53_subdomain     = "nginxvalid-cert"
+environment_name      = "enviroment"
+owned_by              = "Owner"
+proxy_user            = "paul"
+proxy_pass            = "paultest123"
+mitm_tar_download_url = "https://downloads.mitmproxy.org/10.1.5/mitmproxy-10.1.5-linux.tar.gz" #https://mitmproxy.org/downloads/
+mitm_tar_name         = "mitmproxy-10.1.5-linux.tar.gz"

@@ -1,6 +1,6 @@
 output "ssh_login" {
   description = "SSH login command."
-  value       = "ssh -i proxysshkey.pem ubuntu@${aws_eip.eip_proxy.public_ip}"
+  value       = "ssh -o IdentitiesOnly=yes -i proxysshkey.pem ubuntu@${aws_eip.eip_proxy.public_ip}"
 }
 
 output "mitm_start_manually" {
